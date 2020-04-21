@@ -1,0 +1,51 @@
+# History files
+.Rhistory
+.Rapp.history
+.Rproj.user
+
+# Session Data files
+.RData
+
+# Data files I'm generating
+*.rda
+*.rds
+*.err
+*.out
+fastqs/
+symlinks/
+sandbox/
+.snakemake/
+results/
+kma_consensus_seqs/
+*fsa
+PanPlasmo*
+._PanPlasmo*
+*.fa
+*.aln
+
+
+# Seek Deep Files
+targetRefSeqs/
+analysis/
+genomes/
+targetRefSeqs_all_smpls_keep/
+
+# RStudio files
+.Rproj.user/
+
+# knitr and R markdown default cache directories
+/*_cache/
+/cache/
+
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# knitr outputs
+*.pdf
+*.html
+*.docx
+
+# MAC files
+.DS_Store
