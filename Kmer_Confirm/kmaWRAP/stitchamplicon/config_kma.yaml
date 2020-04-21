@@ -1,0 +1,18 @@
+# samples and in/out paths
+smpls: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/OvID_metadata.tab.txt
+fastq: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/fastqs/
+out: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/results/
+# configurations for trimmomatic
+Forward: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/ovid_primers/ovid_forward.fa
+ForwardReverseComplement: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/ovid_primers/ovid_forwardRC.fa
+Reverse: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/ovid_primers/ovid_reverse.fa
+ReverseReverseComplement: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/ovid_primers/ovid_reverseRC.fa
+cutmin_trimmed_length: 100
+
+
+# configurations for flash
+stitch_min_overlap: 150
+stitch_max_overlap: 250
+
+# configurations for kma
+indexeddatabase: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/genomes/panplasmo_db/PanPlasmo

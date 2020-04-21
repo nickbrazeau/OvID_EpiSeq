@@ -1,0 +1,105 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import yaml
+import re
+
+def load_run_metadata(f):
+	""" Get run metadata from tab-separated file."""
+	samples = list()
+	with open(f) as rfile:
+		for line in rfile:
+			if line.startswith("#"):
+				continue
+			line = line.strip().split("\t")
+			samples.append(line[0])
+
+	return samples
+
+## read metadata, and get samples
+samples = load_run_metadata(config["smpls"])
+
+# global configs
+SEQROOT = config["fastq"]
+SCRROOT = config["out"]
+
+## set final target
+final_target = [ os.path.join(SCRROOT, "kma_results", "{}_kma_results".format(s), "{}.kmalog".format(s)) for s in samples ]
+rule all:
+	input: final_target
+
+
+# kma algorithm from
+# Note, flags are: https://bitbucket.org/genomicepidemiology/kma/src/master/
+rule run_kma:
+	input:
+		smplmergecut = os.path.join(SCRROOT, "intermedfastq", "{sample}.trimmed.merged.fastq.gz")
+	params:
+		database = config["indexeddatabase"],
+		outpath = os.path.join(SCRROOT, "kma_results", "{sample}_kma_results", "{sample}"),
+	output:
+		kmalog = os.path.join(SCRROOT, "kma_results", "{sample}_kma_results", "{sample}.kmalog")
+	shell:
+		r"""
+		kma \
+		-1t1 \
+		-t_db {params.database} \
+		-i {input.smplmergecut} \
+		-o {params.outpath} \
+		2> {output.kmalog}
+		"""
+
+
+rule stitch_trimmed:
+	input:
+		trimmed =  os.path.join(SCRROOT, "intermedfastq", "{sample}.trimmed.fastq.gz")
+	params:
+		stitchminoverlap = config["stitch_min_overlap"],
+		stitchmaxoverlap = config["stitch_max_overlap"]
+	output:
+		flashstitchlog =  os.path.join(SCRROOT, "intermedfastq", "{sample}_stitching.log"),
+		smplmergecut = os.path.join(SCRROOT, "intermedfastq", "{sample}.trimmed.merged.fastq.gz")
+	shell:
+		r"""
+		flash --interleaved \
+			--min-overlap {params.stitchminoverlap} \
+			--max-overlap {params.stitchmaxoverlap} \
+			--to-stdout \
+			{input.trimmed} \
+			2>{output.flashstitchlog} | \
+			gzip -c > {output.smplmergecut}
+		"""
+
+# First tream reads through cutadapt and trim based on primer seq
+# 		For flag specifics, see:
+#			http://cutadapt.readthedocs.io/en/stable/guide.html#removing-adapters
+#       For why we chose this schematic: https://benjjneb.github.io/dada2/ITS_workflow.html
+
+rule trim_and_align:
+	input:
+		read1 = os.path.join(SEQROOT, "{sample}_R1_001.fastq.gz"),
+		read2 = os.path.join(SEQROOT, "{sample}_R2_001.fastq.gz"),
+		Fwd = config["Forward"],
+		FwdRC = config["ForwardReverseComplement"],
+		Rev = config["Reverse"],
+		RevRC = config["ReverseReverseComplement"]
+	output:
+		cuttrimlog = os.path.join(SCRROOT, "intermedfastq", "{sample}_trimming.log"),
+		trimmed =  os.path.join(SCRROOT, "intermedfastq", "{sample}.trimmed.fastq.gz"),
+	params:
+		cutminlength = config["cutmin_trimmed_length"]
+	shell:
+		r"""
+		cutadapt --interleaved \
+			-g file:{input.Fwd} \
+			-a file:{input.RevRC} \
+			-G file:{input.Rev} \
+			-A file:{input.FwdRC} \
+			-m {params.cutminlength} \
+			{input.read1} {input.read2} \
+			-o {output.trimmed} \
+			2>{output.cuttrimlog}
+		"""
+
+# note, --interleaved flag uses both interleaved input and output
