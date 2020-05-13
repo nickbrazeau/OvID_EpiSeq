@@ -1,0 +1,6 @@
+# samples and in paths
+smpls: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Blast_Confirm/OvID_metadata.tab.txt
+fastq: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/fastqs/
+out: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Blast_Confirm/results/
+# configurations for magic blast
+magicblastdb: /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/genomes/panplasmo_blastdb/PanPlasmo

@@ -1,0 +1,51 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import yaml
+import re
+
+def load_run_metadata(f):
+	""" Get run metadata from tab-separated file."""
+	samples = list()
+	with open(f) as rfile:
+		for line in rfile:
+			if line.startswith("#"):
+				continue
+			line = line.strip().split("\t")
+			samples.append(line[0])
+
+	return samples
+
+## read metadata, and get samples
+samples = load_run_metadata(config["smpls"])
+
+# global configs
+SEQROOT = config["fastq"]
+OUTPATH = config["out"]
+
+## set final target
+final_target = [ os.path.join(OUTPATH, "{}.blast.log".format(s)) for s in samples ]
+rule all:
+	input: final_target
+
+
+
+rule run_magicblast:
+	input: read1 = os.path.join(SEQROOT, "{sample}_R1_001.fastq.gz"),
+		   read2 = os.path.join(SEQROOT, "{sample}_R2_001.fastq.gz"),
+	params:
+		database = config["magicblastdb"],
+		outpath = os.path.join(OUTPATH, "{sample}_magblastret.gz"),
+	output:
+		blastlog = os.path.join(OUTPATH, "{sample}.blast.log")
+	shell:
+		r"""
+		magicblast -query {input.read1} -query_mate {input.read2}  \
+		-db {params.database} \
+		-infmt fastq \
+		-no_unaligned -splice F\
+		-out {params.outpath} \
+		-outfmt tabular -gzo \
+		2> {output}
+		"""

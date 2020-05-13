@@ -1,10 +1,10 @@
 #! /bin/bash
-WD=/Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/
+WD=/Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Blast_Confirm/
 WAIT=30 # number of seconds to wait for files to appear, absorbing some file system latency
 
 snakemake \
-	--snakefile /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Kmer_Confirm/kmaWRAP/stitchamplicon/kma_wrapper.snake \
-	--configfile config_kma.yaml \
+	--snakefile /Users/nickbrazeau/Documents/GitHub/OvID_EpiSeq/Blast_Confirm/magicblast_wrapper_trim.snake \
+	--configfile trimmedconfig_blast.yaml \
 	--printshellcmds \
 	--directory $WD \
 	--rerun-incomplete \

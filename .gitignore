@@ -17,6 +17,7 @@ sandbox/
 .snakemake/
 results/
 kma_consensus_seqs/
+trimmed_results/
 *fsa
 PanPlasmo*
 ._PanPlasmo*

@@ -24,8 +24,6 @@ readkma <- function(path){
   ret <- cbind.data.frame(smpl, dat)
   colnames(ret) <- gsub("#", "", colnames(ret))
 
-  ret$templateshort <- unlist( stringr::str_extract_all(ret$Template, pattern = "ovale curtisi|ovale wallikeri|vivax|falciparum|malariae", simplify = T) )
-
   return(ret)
 
 
@@ -44,3 +42,5 @@ DT::datatable(kmaout, extensions='Buttons',
                 pageLength = 20,
                 dom = 'Bfrtip',
                 buttons = c('csv')))
+
+
